@@ -1,7 +1,7 @@
 'use strict';
 
 // Gerado por scripts/build-data.mjs: a versão muda quando qualquer arquivo do app muda.
-var VERSAO = '1aba8ae478';
+var VERSAO = '37845cd42b';
 var CACHE = 'controle-emergencia-' + VERSAO;
 var ARQUIVOS = ["./","app.css","app.js","manifest.webmanifest","sync.js","index.html","icons/apple-touch-icon.png","icons/icon-192.png","icons/icon-512.png","icons/maskable-192.png","icons/maskable-512.png"];
 
