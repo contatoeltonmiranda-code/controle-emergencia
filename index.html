@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Controle de emergência | Checklist e guia de preparação</title>
+<meta name="description" content="Checklists de preparação para emergências (mochila, EDC, primeiros socorros, comunicação offline, energia, alimentos e água, segurança) e guia de conhecimento. Funciona sem internet e sincroniza entre celular e computador.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#f3f1ec">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src https://iyobngagfybujbfvlnem.supabase.co; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<!-- ARQUIVO GERADO por scripts/build-data.mjs a partir de src/index.template.html e conteudo/*.json. Não edite o index.html: edite o template ou os JSONs e rode o script. -->
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div class="atualizacao" id="aviso-versao" role="status" hidden>
+  <span>Nova versão disponível.</span>
+  <button type="button" class="btn primario pequeno" id="btn-atualizar">Atualizar agora</button>
+</div>
+<header class="topo">
+  <div class="topo-in">
+    <h1>Controle de emergência</h1>
+    <p class="sub">Checklists de preparação e guia de conhecimento. Marque o que você já possui e o que já aprendeu.</p>
+    <div class="sync" id="sync" data-fase="local">
+      <span class="sync-ponto" aria-hidden="true"></span>
+      <span class="sync-status" id="sync-status" role="status" aria-live="polite">Somente neste aparelho</span>
+      <span class="sync-conta" id="sync-conta"></span>
+      <button type="button" class="btn pequeno" id="btn-entrar">Entrar para sincronizar</button>
+      <button type="button" class="btn pequeno" id="btn-sincronizar" hidden>Sincronizar agora</button>
+      <button type="button" class="btn pequeno" id="btn-sair" hidden>Sair</button>
+    </div>
+    <div class="topo-linha">
+      <div class="geral">
+        <div class="geral-linha"><span>Progresso geral (checklists)</span><strong id="geral-num">0/0 · 0%</strong></div>
+        <div class="barra" role="progressbar" aria-label="Progresso geral dos checklists" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="geral-barra"><span></span></div>
+      </div>
+      <div class="busca">
+        <label for="busca">Buscar em tudo (itens, tutoriais, livros e conhecimentos)</label>
+        <input type="search" id="busca" maxlength="80" autocomplete="off" placeholder="Ex.: torniquete, hipoclorito, bússola">
+        <p class="busca-info" id="busca-info" role="status" aria-live="polite"></p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="layout">
+  <nav class="abas" role="tablist" aria-label="Seções" id="abas"></nav>
+
+  <section class="painel" id="painel" role="tabpanel" aria-labelledby="painel-titulo">
+    <div class="painel-topo">
+      <h2 id="painel-titulo"></h2>
+      <p class="painel-num" id="painel-num"></p>
+      <div class="barra" role="progressbar" aria-label="Progresso da seção" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="painel-barra"><span></span></div>
+    </div>
+    <p class="intro" id="painel-intro"></p>
+    <div class="alerta fixo" id="painel-aviso" role="note" hidden></div>
+
+    <div class="filtros" role="group" aria-label="Filtro de itens" id="filtros">
+      <button type="button" data-filtro="todos" aria-pressed="true">Todos</button>
+      <button type="button" data-filtro="tenho" aria-pressed="false">Tenho</button>
+      <button type="button" data-filtro="falta" aria-pressed="false">Falta</button>
+    </div>
+
+    <div class="aviso" id="aviso" role="status" aria-live="polite"></div>
+
+    <div id="lista"></div>
+
+    <form class="novo" id="form-novo" autocomplete="off">
+      <label class="so-leitor" for="novo-nome">Nome do novo item</label>
+      <input type="text" id="novo-nome" maxlength="120" placeholder="Adicionar item à lista">
+      <button type="submit" class="btn primario">Adicionar</button>
+    </form>
+  </section>
+</main>
+
+<footer class="rodape">
+  <div class="ferramentas">
+    <button type="button" class="btn" id="btn-exportar">Exportar backup (JSON)</button>
+    <button type="button" class="btn" id="btn-importar">Importar backup</button>
+    <button type="button" class="btn perigo" id="btn-restaurar">Restaurar lista padrão</button>
+    <input type="file" id="arquivo" accept=".json,application/json" hidden>
+  </div>
+  <p class="nota" id="nota-rodape"></p>
+</footer>
+
+<dialog id="dlg">
+  <form method="dialog">
+    <h3 id="dlg-titulo"></h3>
+    <p id="dlg-texto"></p>
+    <div class="botoes">
+      <button type="submit" value="cancelar" class="btn" id="dlg-cancelar">Cancelar</button>
+      <button type="submit" value="ok" class="btn primario" id="dlg-ok">Confirmar</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="dlg-login">
+  <form id="form-login" autocomplete="on" novalidate>
+    <h3>Entrar para sincronizar</h3>
+    <p>Use a mesma conta do CRM. Sem entrar, tudo continua funcionando neste aparelho.</p>
+    <label for="login-email">E-mail</label>
+    <input type="email" id="login-email" name="email" autocomplete="username" inputmode="email" maxlength="254" autocapitalize="none" spellcheck="false">
+    <label for="login-senha">Senha</label>
+    <input type="password" id="login-senha" name="senha" autocomplete="current-password" maxlength="200">
+    <p class="erro-login" id="login-erro" role="alert" hidden></p>
+    <div class="botoes">
+      <button type="button" class="btn" id="login-cancelar">Cancelar</button>
+      <button type="submit" class="btn primario" id="login-enviar">Entrar</button>
+    </div>
+  </form>
+</dialog>
+
+<noscript><p class="sem-js">Este checklist precisa de JavaScript ativado.</p></noscript>
+
+<script src="sync.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
